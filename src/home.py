@@ -5,7 +5,8 @@ import unicodedata
 st.set_page_config(page_title="TrendPop", initial_sidebar_state="collapsed",layout="wide")
 
 # Database connection
-conn = st.connection('trendpop_db', type='sql', url="mysql+pymysql://keonmo:mysql@localhost:3306/trendpop_db")
+conn = st.connection('trendpop_db', type='sql', url="mysql+pymysql://trendpop:1234@localhost:3306/trendpop_db")
+
 
 # session state 선언
 if 'MV_url' not in st.session_state:

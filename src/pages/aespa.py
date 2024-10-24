@@ -3,7 +3,7 @@ from carousel_component import *
 import unicodedata
 
 st.set_page_config(page_title="TrendPop", initial_sidebar_state="collapsed", layout="wide")
-conn = st.connection('trendpop_db', type='sql', url="mysql+pymysql://keonmo:mysql@localhost:3306/trendpop_db")
+conn = st.connection('trendpop_db', type='sql', url="mysql+pymysql://trendpop:1234@localhost:3306/trendpop_db")
 
 # session state 선언
 page_path = "pages/"
