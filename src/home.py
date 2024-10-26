@@ -1,12 +1,31 @@
+# conda activate streamlit_env 
+# cd '/Users/jaesolshin/Documents/GitHub/youtube_streamlit/src'
+
+# cd '/Users/jaesolshin/Documents/GitHub/youtube_streamlit/src/carousel_component/frontend/'
+# npm run start
+
+# conda install -c conda-forge pydantic langchain langchain-core langchain-google-genai google-generativeai
+
 from utils import *
 from carousel_component import *
 import unicodedata
+import subprocess
+
+# npm start 실행
+def run_npm():
+    # npm 실행 경로로 이동
+    npm_dir = os.path.join(os.path.dirname(__file__), 'carousel_component', 'frontend')
+    
+    # npm start 명령어 실행
+    subprocess.Popen(['npm', 'start'], cwd=npm_dir)
+
+# Streamlit 앱 시작 전에 npm 실행
+run_npm() 
 
 st.set_page_config(page_title="TrendPop", initial_sidebar_state="collapsed",layout="wide")
 
 # Database connection
 conn = st.connection('trendpop_db', type='sql', url="mysql+pymysql://trendpop:1234@localhost:3306/trendpop_db")
-
 
 # session state 선언
 if 'MV_url' not in st.session_state:
@@ -56,25 +75,20 @@ def main():
         fig = create_sentiment_chart(group_df[['Group', 'Title', 'date', 'predicted_label']], date_range=[min_date, max_date])
         selected_point = sentiment_plot(fig, key="sentiment_chart")
 
-    # 클릭시 event 발생, 제미나이에게 물어보기 (gemini.py파일)
-    # if selected_point:
-        # date, value, sentiment = point['x'], point['y'], point['curveNumber']
-        # chatbot_response = get_chatbot_response(selected_group, date, sentiment_map[sentiment], value)
-        # st.write(
-        #     f"Showing 3 {sentiment_map[sentiment]} news links related to K-pop group '{selected_group}' during {date}:")
-        # st.markdown(chatbot_response)
-
     st.subheader("Ask Gemini! 이슈 분석")
     if selected_point:
         st.chat_message("assistant").write(
         f"Gemini-1.5-Flash: {selected_group}에게 {selected_point[0]['x']} 기간에 있던 일을 찾아볼까요?")
         ask_button = st.button("Ask Gemini!")
-        # if ask_button:
-            #chatbot_response = get_chatbot_response()
+        if ask_button:
+            chatbot_response = get_chatbot_response(selected_group, selected_point[0]['x'])
+            st.markdown(chatbot_response)
     else:
         st.chat_message("assistant").write(
         f"Gemini-1.5-Flash: 그래프를 클릭해서 {selected_group}에 대해 물어보세요!")
 
+
+    st.divider()
     st.subheader("뮤직비디오")
 
     mv_info = carousel_component(data=all_data['mv_thumbnail'], layout='default', key='mv_carousel')

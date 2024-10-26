@@ -21,7 +21,7 @@ def create_frequency_chart(df, window_length=7, polyorder=3, date_range=None):
     # Group by date for total comments
     total_comments = df.groupby(df['date'].dt.date).size()
 
-    # Apply Savitzky-Golay filter for smoothing
+    # Apply Exponentially Weighted Moving Average for smoothing
     # smoothed_comments = savgol_filter(total_comments.values, window_length, polyorder)
     smoothed_comments = total_comments.ewm(span=14).mean()
 
@@ -32,7 +32,7 @@ def create_frequency_chart(df, window_length=7, polyorder=3, date_range=None):
         x=total_comments.index,
         y=smoothed_comments,
         mode='lines',
-        name='Total Comments',
+        name='Exponentially Weighted Moving Average',
         opacity=0.9,
         line=dict(color='black'),
         hovertemplate='Date: %{x|%Y-%m-%d}<br>Comments: %{y:.0f}<extra></extra>'
